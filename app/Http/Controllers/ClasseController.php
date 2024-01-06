@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\classe;
 use App\Models\Cycle;
+use App\Models\Eleve;
 use Illuminate\Http\Request;
 
 class ClasseController extends Controller
@@ -18,7 +19,12 @@ class ClasseController extends Controller
      */
     public function index()
     {
-        //
+        $cycles = Cycle::orderBy('libelle')->get();
+        $classes = Classe::with('inscriptions')->paginate(10);
+        return inertia('Classe/Index',[
+            'classes'       => $classes,
+            'cycles'        => $cycles
+        ]);
     }
 
     /**
@@ -34,7 +40,22 @@ class ClasseController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        ['libelle' => $libelle,'cycle' => $cycle] = $request->validate([
+            'libelle'   => 'string|max:50|min:2|unique:classes,libelle',
+            'cycle'     => 'numeric'
+        ],[
+            'libelle.unique'    => 'Le libelle existe deja!',
+            'libelle.min'    => 'Le libelle doit avoir au moins 2 caractere!'
+        ]);
+
+        Classe::create([
+            'libelle'   => $libelle,
+            'cycle_id'     => $cycle
+        ]);
+
+        return redirect()->route('classes.index')
+                ->with('success','Classe ajoutée.');
+
     }
 
     /**
@@ -42,7 +63,16 @@ class ClasseController extends Controller
      */
     public function show(Classe $classe)
     {
-        //
+
+        $classe->load('inscriptions.eleve');
+        $eleves = [];
+        foreach ($classe->inscriptions as $c) {
+            $eleves[] = $c->eleve;
+        }
+        return inertia('Classe/Show',[
+            'classe'    => $classe,
+            'eleves'    => $eleves
+        ]);
     }
 
     /**

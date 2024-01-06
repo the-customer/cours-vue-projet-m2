@@ -3,6 +3,9 @@
 @tailwind utilities;
 
 @layer components{
+    .square{
+        @apply w-10 h-10 bg-gray-800 border-2 m-1
+    }
     .label{
         @apply block mb-1 text-gray-500 dark:text-gray-300 font-medium
     }

@@ -5,7 +5,8 @@
       <div class="container mx-auto">
         <nav class="p-4 flex items-center justify-between">
           <div class="text-lg font-medium">
-            <Link :href="route('eleves.index')">Eleves</Link>
+            <Link :href="route('eleves.index')" class="mr-2">Eleves</Link>
+            <Link :href="route('classes.index')">Classes</Link>
           </div>
           <div
             class="text-xl text-red-600 dark:text-red-300 font-bold text-center"

@@ -18,5 +18,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::get("/",[IndexController::class,'index']);
 Route::get("/show",[IndexController::class,'show']);
-
+//
 Route::resource('eleves',EleveController::class);
+//
+Route::controller(ClasseController::class)
+->name('classes.')
+->group(function(){
+    Route::get('/classes','index')->name('index');
+    Route::post('/classes','store')->name('store');
+    Route::get('/classes/{classe}','show')->name('show');
+});

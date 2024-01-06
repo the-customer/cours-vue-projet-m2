@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Cycle;
 use App\Models\Eleve;
+use App\Models\Inscription;
+use DB;
 use Illuminate\Http\Request;
 
 class EleveController extends Controller
@@ -35,13 +37,22 @@ class EleveController extends Controller
      */
     public function store(Request $request)
     {
-        Eleve::create($request->validate([
+        $AS = 1;
+        DB::beginTransaction();
+        $eleve = Eleve::create($request->validate([
             'nom'   => 'string|required',
             'prenom'   => 'string|required',
             'naissance' =>'sometimes|date',
             'sexe'  =>'required|in:F,M',
             'lieu'  => 'sometimes|string'
         ]));
+        //
+        Inscription::create([
+            'classe_id' => $request->classe,
+            'eleve_id'  => $eleve->id,
+            'annee_scolaire_id' => $AS
+        ]);
+        DB::commit();
         // return response()->redirectTo("/eleves");
         return redirect()
             ->route("eleves.index")

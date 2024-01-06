@@ -1,6 +1,7 @@
 <template>
+    <Loader v-if="isLoading"/>
     <div>
-        <h3>Inscription</h3>
+        <h3 class="text-2xl">Inscription</h3>
         <form @submit.prevent="save" class="w-1/2 m-auto">
             <div>
                 <label for="nom">Nom</label>
@@ -64,6 +65,13 @@
 </template>
 
 <script setup>
+import { useForm } from '@inertiajs/vue3';
+import axios from 'axios';
+import { ref } from 'vue';
+import Loader from '@/components/Loader.vue';
+
+
+const isLoading = ref(false)
 
 const props = defineProps({
     cycles: Array
@@ -84,9 +92,7 @@ const props = defineProps({
 //
 // const save = () => router.post('/eleves',form);
 //2ieme methode
-import { useForm } from '@inertiajs/vue3';
-import axios from 'axios';
-import { ref } from 'vue';
+
 const form = useForm({
     nom: null,
     prenom: null,
@@ -103,12 +109,14 @@ const classes = ref([])
 const save = () => form.post('/eleves');
 //
 const getClasses = () => {
+    isLoading.value = true;
     if(!form.cycle){
         return;
     }
     setTimeout(() => {
         axios.get(`/api/cycles/${form.cycle}/classes`).then(response => {
         classes.value = [...response.data];
+        isLoading.value = false;
     })
     }, 3000);
 }
